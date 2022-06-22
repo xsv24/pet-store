@@ -3,7 +3,6 @@ import { v4 as uuid } from 'uuid';
 type PetType = 'cat' | 'dog' | 'rabbit';
 
 export class Pet {
-    id: string;
     type: PetType;
     name: string;
     dob: Date;
@@ -13,9 +12,9 @@ export class Pet {
 export class PetEntity extends Pet {
     id: string;
 
-    constructor(pet: Pet) {
+    constructor(pet: Pet, id: string = uuid()) {
         super();
-        this.id = uuid();
+        this.id = id;
         this.dob = pet.dob;
         this.name = pet.name;
         this.species = pet.species;
