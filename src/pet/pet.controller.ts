@@ -10,7 +10,13 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
 import { Pet, PetEntity, PetQuery } from './pet.entity';
 import { Errors, PetService } from './pet.service';
@@ -30,30 +36,48 @@ export class PetController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Attempt to update an existing pet to the store registry' })
-  @ApiParam({ name: 'id', type: String, description: 'Unique pet identifier', example: randomUUID() })
+  @ApiOperation({
+    summary: 'Attempt to update an existing pet to the store registry',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Unique pet identifier',
+    example: randomUUID(),
+  })
   @ApiBody({ type: Pet })
   @ApiResponse({ status: 200, type: PetEntity })
-  @ApiResponse({ status: 404, description: 'When pet not found by provided "id".'})
+  @ApiResponse({
+    status: 404,
+    description: 'When pet not found by provided "id".',
+  })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
-  async put(@Param('id') id: string, @Body() body: Pet) : Promise<PetEntity> {
-    const updated = this.pets.update(id, body)
+  async put(@Param('id') id: string, @Body() body: Pet): Promise<PetEntity> {
+    const updated = this.pets.update(id, body);
 
-    if(updated.err) throw this.intoHttpError(updated.val);
+    if (updated.err) throw this.intoHttpError(updated.val);
 
     return updated.expect('Failed to update pet.');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Attempt to fetch a pet from store registry' })
-  @ApiParam({ name: 'id', type: String, description: 'Unique pet identifier', example: randomUUID() })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Unique pet identifier',
+    example: randomUUID(),
+  })
   @ApiResponse({ status: 200, type: PetEntity })
-  @ApiResponse({ status: 404, description: 'When pet not found by provided "id".'})
+  @ApiResponse({
+    status: 404,
+    description: 'When pet not found by provided "id".',
+  })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
   async get(@Param('id') id: string): Promise<PetEntity> {
-    const pet = this.pets.get(id)
+    const pet = this.pets.get(id);
 
-    if(pet.err) throw this.intoHttpError(pet.val);
+    if (pet.err) throw this.intoHttpError(pet.val);
 
     return pet.expect('Failed to fetch a pet.');
   }
@@ -68,22 +92,30 @@ export class PetController {
 
   @Delete()
   @ApiOperation({ summary: 'Attempt to remove a pet from the store registry' })
-  @ApiParam({ name: 'id', type: String, description: 'Unique pet identifier', example: randomUUID() })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Unique pet identifier',
+    example: randomUUID(),
+  })
   @ApiResponse({ status: 200, description: 'On a successful deletion.' })
-  @ApiResponse({ status: 404, description: 'When pet not found by provided "id".'})
+  @ApiResponse({
+    status: 404,
+    description: 'When pet not found by provided "id".',
+  })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
   async delete(@Param('id') id: string) {
-    const deleted = this.pets.delete(id)
+    const deleted = this.pets.delete(id);
 
-    if(deleted.err) throw this.intoHttpError(deleted.val);
+    if (deleted.err) throw this.intoHttpError(deleted.val);
   }
 
-  intoHttpError(error: Errors) : HttpException {
-    switch(error) {
-        case Errors.NotFound:
-            return new HttpException('Pet not found', HttpStatus.NOT_FOUND)
-        default:
-            return new HttpException('Internal server error occurred', 500)
+  intoHttpError(error: Errors): HttpException {
+    switch (error) {
+      case Errors.NotFound:
+        return new HttpException('Pet not found', HttpStatus.NOT_FOUND);
+      default:
+        return new HttpException('Internal server error occurred', 500);
     }
   }
 }

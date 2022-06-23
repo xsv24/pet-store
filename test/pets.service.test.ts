@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Pet, PetEntity } from '../src/pet/pet.entity';
+import { Pet, PetEntity, PetType } from '../src/pet/pet.entity';
 import { Errors, IPetMap, PetService } from '../src/pet/pet.service';
 
 describe('PetService', () => {
@@ -17,7 +17,7 @@ describe('PetService', () => {
       name: '',
       dob: new Date(),
       species: '',
-      type: 'dog',
+      type: PetType.Cat,
     };
 
     // Act
@@ -35,7 +35,7 @@ describe('PetService', () => {
         name: '',
         dob: new Date(),
         species: '',
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       map[existing.id] = existing;
@@ -46,7 +46,7 @@ describe('PetService', () => {
         name: 'joe',
         dob: new Date(),
         species: '',
-        type: 'cat',
+        type: PetType.Rabbit,
       };
 
       // Act
@@ -67,7 +67,7 @@ describe('PetService', () => {
         name: '',
         dob: new Date(),
         species: '',
-        type: 'dog',
+        type: PetType.Cat,
       };
 
       map[expected.id] = expected;
@@ -88,7 +88,7 @@ describe('PetService', () => {
         name: '',
         dob: new Date(),
         species: '',
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       map[expected.id] = expected;
@@ -111,7 +111,7 @@ describe('PetService', () => {
         name: '',
         dob: new Date(),
         species: '',
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       map[expected.id] = expected;
@@ -132,7 +132,7 @@ describe('PetService', () => {
         name: 'james',
         dob: new Date(),
         species: 'poodle',
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       const otherDog: PetEntity = {
@@ -140,7 +140,7 @@ describe('PetService', () => {
         name: 'billy',
         dob: new Date(),
         species: 'poodle',
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       map[dog.id] = dog;
@@ -167,7 +167,7 @@ describe('PetService', () => {
         name: randomUUID(),
         dob: new Date(),
         species: randomUUID(),
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       const dog2: PetEntity = {
@@ -175,7 +175,7 @@ describe('PetService', () => {
         name: randomUUID(),
         dob: new Date(),
         species: randomUUID(),
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       const cat: PetEntity = {
@@ -183,7 +183,7 @@ describe('PetService', () => {
         name: randomUUID(),
         dob: new Date(),
         species: randomUUID(),
-        type: 'cat',
+        type: PetType.Cat,
       };
 
       map[dog1.id] = dog1;
@@ -193,7 +193,7 @@ describe('PetService', () => {
       const service = new PetService(map);
 
       // Act
-      const pets = service.filter({ type: 'dog' });
+      const pets = service.filter({ type: PetType.Dog });
 
       // Assert
       expect(pets).toStrictEqual([dog1, dog2]);
@@ -217,7 +217,7 @@ describe('PetService', () => {
         name: '',
         dob: new Date(),
         species: '',
-        type: 'dog',
+        type: PetType.Dog,
       };
 
       map[expected.id] = expected;
