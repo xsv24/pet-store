@@ -712,7 +712,7 @@
     lodash "4.17.21"
     path-to-regexp "3.2.0"
 
-"@nestjs/testing@^8.4.7":
+"@nestjs/testing@^8.0.0":
   version "8.4.7"
   resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-8.4.7.tgz#fe4f356c0e081e25fe8c899a65e91dd88947fd13"
   integrity sha512-aedpeJFicTBeiTCvJWUG45WMMS53f5eu8t2fXsfjsU1t+WdDJqYcZyrlCzA4dL1B7MfbqaTURdvuVVHTmJO8ag==
@@ -4399,6 +4399,11 @@ ts-node@^10.0.0:
     make-error "^1.1.1"
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
+
+ts-results@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/ts-results/-/ts-results-3.3.0.tgz#68623a6c18e65556287222dab76498a28154922f"
+  integrity sha512-FWqxGX2NHp5oCyaMd96o2y2uMQmSu8Dey6kvyuFdRJ2AzfmWo3kWa4UsPlCGlfQ/qu03m09ZZtppMoY8EMHuiA==
 
 tsconfig-paths-webpack-plugin@3.5.2:
   version "3.5.2"

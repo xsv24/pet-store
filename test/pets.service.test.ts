@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
+import { Ok } from "ts-results";
 import { Pet, PetEntity } from "../src/pets/pet.entity";
-import { IPetMap, PetService } from "../src/pets/pets.service";
+import { Errors, IPetMap, PetService } from "../src/pets/pets.service";
 
 describe('PetService', () => {
     let map: IPetMap;
@@ -21,14 +22,42 @@ describe('PetService', () => {
         };
 
         // Act
-        service.add(pet);
+        const entity = service.add(pet);
 
         // Assert
-        const pets = Object.values(map);
-        const entity : PetEntity = new PetEntity(pet, pets[0].id);
-        const expected: PetEntity[] = [ entity ];
+        expect(map[entity.id]).toStrictEqual(entity);
+    });
 
-        expect(pets).toStrictEqual(expected);
+    describe('update an existing pet', () => {
+        it('update a pet by id', () => {
+            // Arrange
+            const existing: PetEntity = {
+                id: randomUUID(),
+                name: '',
+                dob: new Date(),
+                species: '',
+                type: 'dog'
+            };
+
+            map[existing.id] = existing;
+
+            const service = new PetService(map);
+
+            const pet : Pet = {
+                name: 'joe',
+                dob: new Date(),
+                species: '',
+                type: 'cat'
+            };
+
+            // Act
+            const updated = service.update(existing.id, pet);
+
+            // Act
+            const expected = new PetEntity(pet, existing.id);
+            expect(updated.val).toStrictEqual(expected);
+            expect(map[existing.id]).toStrictEqual(expected);
+        });
     });
 
     describe('get a pet', () => {
@@ -51,10 +80,10 @@ describe('PetService', () => {
             const pet = service.get(expected.id);
             
             // Assert
-            expect(pet).toStrictEqual(expected);
+            expect(pet.val).toStrictEqual(expected);
         });
 
-        it('if not pet is found undefined is returned', () => {
+        it('if not pet is not found an error result is returned', () => {
             // Arrange
             const expected : PetEntity = {
                 id: randomUUID(),
@@ -69,10 +98,10 @@ describe('PetService', () => {
             const service = new PetService(map);
 
             // Act
-            const pet = service.get(randomUUID());
+            const error = service.get(randomUUID()).val;
             
             // Assert
-            expect(pet).toStrictEqual(undefined);
+            expect(error).toStrictEqual(Errors.NotFound);
         });
     });
 
@@ -110,9 +139,9 @@ describe('PetService', () => {
         });
     });
 
-    describe('sell a pet', () => {
+    describe('delete a pet from the registry store', () => {
 
-        it('sell a pet with the specified id', () => {
+        it('delete a pet with the specified id', () => {
             // Arrange
             const expected : PetEntity = {
                 id: randomUUID(),
@@ -127,14 +156,22 @@ describe('PetService', () => {
             const service = new PetService(map);
 
             // Act
-            service.delete(expected.id);
+            const result = service.delete(expected.id);
             
             // Assert
             expect(map[expected.id]).toBe(undefined);
+            expect(result.ok).toBe(true);
         });
 
-        it('attempting to sell a pet that is already sold returns already sold status', () => {
-            // TODO: have delete return an enum to specify success | error of deletion.
+        it('attempting to delete an non-existing pet returns an error result', () => {
+            // Arrange
+            const service = new PetService();
+
+            // Act
+            const result = service.delete(randomUUID());
+            
+            // Assert
+            expect(result.val).toBe(Errors.NotFound);
         });
     });
 });
