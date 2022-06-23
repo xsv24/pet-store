@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Result, Ok, Err } from "ts-results";
-import { Pet, PetEntity } from "./pet.entity";
+import { Pet, PetEntity, PetQuery } from "./pet.entity";
 
 export interface IPetMap { 
     [id: string] : PetEntity;
@@ -16,11 +16,16 @@ export class PetService {
 
     get(id: string) : Result<PetEntity, Errors> {
         const pet = this.pets[id];
-        return pet ? Ok(pet) : Err(Errors.NotFound)
+        return pet ? Ok(pet) : Err(Errors.NotFound);
     }
 
-    getAll() : PetEntity[] {
-        return Object.values(this.pets);
+    filter(query?: PetQuery) : PetEntity[] {
+        return Object.values(this.pets).filter(({ name, type, dob, species }) => 
+            (!query?.name || name == query.name) &&
+            (!query?.type || type == query.type) &&
+            (!query?.dob || dob == query.dob) && // TODO: Would probably have a date range match instead.
+            (!query?.species || species == query.species)
+        );
     }
 
     update(id: string, pet: Pet) : Result<PetEntity, Errors> {

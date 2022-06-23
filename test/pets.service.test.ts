@@ -105,9 +105,9 @@ describe('PetService', () => {
         });
     });
 
-    describe('get all pets', () => {
+    describe('filter', () => {
 
-        it('fetches object values of pet map', () => {
+        it('without a query all object values of pet map are returned', () => {
             // Arrange
             const expected : PetEntity = {
                 id: randomUUID(),
@@ -122,10 +122,84 @@ describe('PetService', () => {
             const service = new PetService(map);
 
             // Act
-            const pets = service.getAll();
+            const pets = service.filter();
             
             // Assert
             expect(pets).toStrictEqual([expected]);
+        });
+
+        it('on an exact query match the matched pets are returned', () => {
+            // Arrange
+            const dog : PetEntity = {
+                id: randomUUID(),
+                name: 'james',
+                dob: new Date(),
+                species: 'poodle',
+                type: 'dog'
+            };
+
+            const otherDog : PetEntity = {
+                id: randomUUID(),
+                name: 'billy',
+                dob: new Date(),
+                species: 'poodle',
+                type: 'dog'
+            };
+
+            map[dog.id] = dog;
+            map[otherDog.id] = otherDog;
+
+            const service = new PetService(map);
+
+            // Act
+            const pets = service.filter({
+                name: dog.name,
+                dob: dog.dob,
+                species: dog.species,
+                type: dog.type 
+            });
+            
+            // Assert
+            expect(pets).toStrictEqual([dog]);
+        });
+
+        it('on an partial query match the matched pets are returned', () => {
+            // Arrange
+            const dog1 : PetEntity = {
+                id: randomUUID(),
+                name: randomUUID(),
+                dob: new Date(),
+                species: randomUUID(),
+                type: 'dog'
+            };
+
+            const dog2 : PetEntity = {
+                id: randomUUID(),
+                name: randomUUID(),
+                dob: new Date(),
+                species: randomUUID(),
+                type: 'dog'
+            };
+
+            const cat : PetEntity = {
+                id: randomUUID(),
+                name: randomUUID(),
+                dob: new Date(),
+                species: randomUUID(),
+                type: 'cat'
+            };
+
+            map[dog1.id] = dog1;
+            map[dog2.id] = dog2;
+            map[cat.id] = cat;
+
+            const service = new PetService(map);
+
+            // Act
+            const pets = service.filter({ type: 'dog' });
+            
+            // Assert
+            expect(pets).toStrictEqual([dog1, dog2]);
         });
 
 
@@ -133,7 +207,7 @@ describe('PetService', () => {
             // Arrange
             const service = new PetService();
             // Act
-            const pets = service.getAll();
+            const pets = service.filter();
             // Assert
             expect(pets).toStrictEqual([]);
         });

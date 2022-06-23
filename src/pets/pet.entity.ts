@@ -9,6 +9,13 @@ export class Pet {
     species: string;
 }
 
+export class PetQuery {
+    type?: PetType;
+    name?: string;
+    dob?: Date;
+    species?: string;
+}
+
 export class PetEntity extends Pet {
     id: string;
 
