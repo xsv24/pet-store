@@ -12,7 +12,7 @@ async function bootstrap() {
     .addTag('pets')
     .build();
 
-  SwaggerModule.setup('api', app, SwaggerModule.createDocument(app, config))
+  SwaggerModule.setup('api', app, SwaggerModule.createDocument(app, config));
 
   await app.listen(3000);
 }
