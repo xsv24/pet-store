@@ -3,7 +3,8 @@ import { INestApplication } from '@nestjs/common';
 import * as supertest from 'supertest';
 import { PetModule } from '../src/pet/pet.module';
 import { randomUUID } from 'crypto';
-import { PetEntity } from 'src/pet/pet.entity';
+import { PetEntity } from '../src/pet/pet.entity';
+import { setup } from '../src/validator';
 
 describe('PetController (e2e)', () => {
   let app: INestApplication;
@@ -14,7 +15,7 @@ describe('PetController (e2e)', () => {
       imports: [PetModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = setup(moduleFixture.createNestApplication());
     await app.init();
     server = supertest(app.getHttpServer());
   });
@@ -23,31 +24,56 @@ describe('PetController (e2e)', () => {
     app.close();
   });
 
-  it('/pets (POST)', async () => {
-    // Arrange
-    const req = { name: 'Joe', type: 'dog', dob: '', species: '' };
+  describe('/pets (POST)', () => {
+    it('Pet is created on post', async () => {
+      // Arrange
+      const req = fakePet();
 
-    // Act
-    const res = await server.post('/v1/pets').send(req).expect(201);
+      // Act
+      const res = await server.post('/v1/pets').send(req).expect(201);
 
-    const response = { id: res.body.id, ...req };
-    expect(res.body).toStrictEqual(response);
+      const response = { id: res.body.id, ...req };
+      expect(res.body).toStrictEqual(response);
 
-    // Assert
-    await server.get(`/v1/pets/${res.body.id}`).expect(200).expect(response);
+      // Assert
+      await server.get(`/v1/pets/${res.body.id}`).expect(200).expect(response);
 
-    await server.get(`/v1/pets`).expect(200).expect([response]);
+      await server.get(`/v1/pets`).expect(200).expect([response]);
+    });
+
+    it('On invalid pet type a 400 error is returned', async () => {
+      // Arrange
+      const req = { ...fakePet(), type: 'invalid' };
+      // Act & Assert
+      await server.post('/v1/pets').send(req).expect(400);
+    });
+
+    it('On invalid dob type a 400 error is returned', async () => {
+      // Arrange
+      const req = { ...fakePet(), dob: 'invalid_date' };
+      // Act & Assert
+      await server.post('/v1/pets').send(req).expect(400);
+    });
+
+    it('On invalid name a 400 error is returned', async () => {
+      // Arrange
+      const req = { ...fakePet(), name: '' };
+      // Act & Assert
+      await server.post('/v1/pets').send(req).expect(400);
+    });
+
+    it('On invalid species a 400 error is returned', async () => {
+      // Arrange
+      const req = { ...fakePet(), species: '' };
+      // Act & Assert
+      await server.post('/v1/pets').send(req).expect(400);
+    });
   });
 
   describe('/pets (GET)', () => {
     it('existing pets are fetched', async () => {
       // Arrange
-      const dog = await PostPet(server, {
-        name: 'Joe',
-        type: 'dog',
-        dob: '',
-        species: '',
-      });
+      const dog = await PostPet(server, { ...fakePet(), type: 'dog' });
       const cat = await PostPet(server, { ...dog, type: 'cat' });
       const rabbit = await PostPet(server, { ...dog, type: 'rabbit' });
 
@@ -57,12 +83,7 @@ describe('PetController (e2e)', () => {
 
     it('existing pets are filtered on query', async () => {
       // Arrange
-      const dog = await PostPet(server, {
-        name: 'Joe',
-        type: 'dog',
-        dob: '',
-        species: '',
-      });
+      const dog = await PostPet(server, { ...fakePet(), type: 'dog' });
       const cat = await PostPet(server, { ...dog, type: 'cat' });
       const rabbit = await PostPet(server, { ...dog, type: 'rabbit' });
 
@@ -107,7 +128,7 @@ describe('PetController (e2e)', () => {
 
     it('On pet not found a 404 is returned', async () => {
       // Arrange
-      const req = { name: 'Joe', type: 'dog', dob: '', species: '' };
+      const req = fakePet();
 
       // Act & Assert
       await server.put(`/v1/pets/${randomUUID()}`).send(req).expect(404);
@@ -132,12 +153,16 @@ describe('PetController (e2e)', () => {
 
 export async function PostPet(
   server: supertest.SuperTest<supertest.Test>,
-  body?: any,
+  body: any = fakePet(),
 ): Promise<PetEntity> {
-  const response = await server
-    .post('/v1/pets')
-    .send(body ?? { name: 'Joe', type: 'dog', dob: '', species: '' })
-    .expect(201);
+  const response = await server.post('/v1/pets').send(body).expect(201);
 
   return response.body as PetEntity;
 }
+
+const fakePet = () => ({
+  name: 'Joe',
+  type: 'dog',
+  dob: new Date().toISOString(),
+  species: 'species',
+});

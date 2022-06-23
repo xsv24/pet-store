@@ -1,11 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PetModule } from './pet/pet.module';
+import { setup } from './validator';
 
 async function bootstrap() {
-  const app = await NestFactory.create(PetModule);
-  app.useGlobalPipes(new ValidationPipe());
+  const app = setup(await NestFactory.create(PetModule));
 
   const config = new DocumentBuilder()
     .setTitle('Pet store')

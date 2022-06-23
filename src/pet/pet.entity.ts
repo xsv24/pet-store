@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { v4 as uuid } from 'uuid';
 
 export enum PetType {
@@ -13,6 +19,7 @@ export class Pet {
   @ApiProperty({ enum: PetType, description: 'Type of pet.' })
   type: PetType;
 
+  @IsNotEmpty()
   @IsString()
   @ApiProperty({
     type: String,
@@ -29,6 +36,7 @@ export class Pet {
   })
   dob: string;
 
+  @IsNotEmpty()
   @IsString()
   @ApiProperty({
     type: String,

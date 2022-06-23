@@ -4,6 +4,7 @@ import {
   ArgumentMetadata,
   BadRequestException,
   Type,
+  INestApplication,
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
@@ -26,4 +27,10 @@ export class ValidationPipe implements PipeTransform<any> {
     const types: Type<any>[] = [String, Boolean, Number, Array, Object];
     return !types.includes(meta);
   }
+}
+
+export function setup(app: INestApplication): INestApplication {
+  app.useGlobalPipes(new ValidationPipe());
+
+  return app;
 }

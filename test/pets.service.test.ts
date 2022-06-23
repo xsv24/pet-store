@@ -13,15 +13,8 @@ describe('PetService', () => {
     // Arrange
     const service = new PetService(map);
 
-    const pet: Pet = {
-      name: '',
-      dob: new Date(),
-      species: '',
-      type: PetType.Cat,
-    };
-
     // Act
-    const entity = service.add(pet);
+    const entity = service.add(fakePet());
 
     // Assert
     expect(map[entity.id]).toStrictEqual(entity);
@@ -30,12 +23,11 @@ describe('PetService', () => {
   describe('update an existing pet', () => {
     it('update a pet by id', () => {
       // Arrange
+      const origin = fakePet();
+
       const existing: PetEntity = {
         id: randomUUID(),
-        name: '',
-        dob: new Date(),
-        species: '',
-        type: PetType.Dog,
+        ...origin,
       };
 
       map[existing.id] = existing;
@@ -43,9 +35,8 @@ describe('PetService', () => {
       const service = new PetService(map);
 
       const pet: Pet = {
+        ...origin,
         name: 'joe',
-        dob: new Date(),
-        species: '',
         type: PetType.Rabbit,
       };
 
@@ -64,10 +55,7 @@ describe('PetService', () => {
       // Arrange
       const expected: PetEntity = {
         id: randomUUID(),
-        name: '',
-        dob: new Date(),
-        species: '',
-        type: PetType.Cat,
+        ...fakePet(),
       };
 
       map[expected.id] = expected;
@@ -85,10 +73,7 @@ describe('PetService', () => {
       // Arrange
       const expected: PetEntity = {
         id: randomUUID(),
-        name: '',
-        dob: new Date(),
-        species: '',
-        type: PetType.Dog,
+        ...fakePet(),
       };
 
       map[expected.id] = expected;
@@ -108,10 +93,7 @@ describe('PetService', () => {
       // Arrange
       const expected: PetEntity = {
         id: randomUUID(),
-        name: '',
-        dob: new Date(),
-        species: '',
-        type: PetType.Dog,
+        ...fakePet(),
       };
 
       map[expected.id] = expected;
@@ -127,62 +109,55 @@ describe('PetService', () => {
 
     it('on an exact query match the matched pets are returned', () => {
       // Arrange
-      const dog: PetEntity = {
+      const pet = fakePet();
+
+      const entity1: PetEntity = {
         id: randomUUID(),
+        ...pet,
         name: 'james',
-        dob: new Date(),
-        species: 'poodle',
-        type: PetType.Dog,
       };
 
-      const otherDog: PetEntity = {
+      const entity2: PetEntity = {
         id: randomUUID(),
+        ...pet,
         name: 'billy',
-        dob: new Date(),
-        species: 'poodle',
-        type: PetType.Dog,
       };
 
-      map[dog.id] = dog;
-      map[otherDog.id] = otherDog;
+      map[entity1.id] = entity1;
+      map[entity2.id] = entity2;
 
       const service = new PetService(map);
 
       // Act
       const pets = service.filter({
-        name: dog.name,
-        dob: dog.dob,
-        species: dog.species,
-        type: dog.type,
+        name: entity1.name,
+        dob: entity1.dob,
+        species: entity1.species,
+        type: entity1.type,
       });
 
       // Assert
-      expect(pets).toStrictEqual([dog]);
+      console.log(pets);
+      expect(pets).toStrictEqual([entity1]);
     });
 
     it('on an partial query match the matched pets are returned', () => {
       // Arrange
       const dog1: PetEntity = {
         id: randomUUID(),
-        name: randomUUID(),
-        dob: new Date(),
-        species: randomUUID(),
+        ...fakePet(),
         type: PetType.Dog,
       };
 
       const dog2: PetEntity = {
         id: randomUUID(),
-        name: randomUUID(),
-        dob: new Date(),
-        species: randomUUID(),
+        ...fakePet(),
         type: PetType.Dog,
       };
 
       const cat: PetEntity = {
         id: randomUUID(),
-        name: randomUUID(),
-        dob: new Date(),
-        species: randomUUID(),
+        ...fakePet(),
         type: PetType.Cat,
       };
 
@@ -214,10 +189,7 @@ describe('PetService', () => {
       // Arrange
       const expected: PetEntity = {
         id: randomUUID(),
-        name: '',
-        dob: new Date(),
-        species: '',
-        type: PetType.Dog,
+        ...fakePet(),
       };
 
       map[expected.id] = expected;
@@ -243,4 +215,11 @@ describe('PetService', () => {
       expect(result.val).toBe(Errors.NotFound);
     });
   });
+});
+
+const fakePet = (): Pet => ({
+  name: randomUUID(),
+  type: PetType.Dog,
+  dob: new Date().toISOString(),
+  species: randomUUID(),
 });
