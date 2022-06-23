@@ -15,10 +15,10 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/pets (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/v1/pets')
       .expect(200)
-      .expect('Hello World!');
+      .expect([]);
   });
 });
