@@ -137,7 +137,6 @@ describe('PetService', () => {
       });
 
       // Assert
-      console.log(pets);
       expect(pets).toStrictEqual([entity1]);
     });
 
