@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
-import { Pet, PetEntity } from '../src/pets/pet.entity';
-import { Errors, IPetMap, PetService } from '../src/pets/pets.service';
+import { Pet, PetEntity } from '../src/pet/pet.entity';
+import { Errors, IPetMap, PetService } from '../src/pet/pet.service';
 
 describe('PetService', () => {
   let map: IPetMap;
