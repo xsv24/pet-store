@@ -29,7 +29,7 @@ export class PetController {
   @Post()
   @ApiOperation({ summary: 'Add a pet to the pet store registry' })
   @ApiBody({ type: Pet })
-  @ApiResponse({ status: 200, type: PetEntity })
+  @ApiResponse({ status: 201, type: PetEntity })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
   async post(@Body() body: Pet): Promise<PetEntity> {
     return this.pets.add(body);
@@ -90,7 +90,7 @@ export class PetController {
     return this.pets.filter(query);
   }
 
-  @Delete()
+  @Delete(':id')
   @ApiOperation({ summary: 'Attempt to remove a pet from the store registry' })
   @ApiParam({
     name: 'id',
