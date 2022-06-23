@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -30,6 +31,7 @@ export class PetController {
   @ApiOperation({ summary: 'Add a pet to the pet store registry' })
   @ApiBody({ type: Pet })
   @ApiResponse({ status: 201, type: PetEntity })
+  @ApiResponse({ status: 400, description: 'On an invalid request' })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
   async post(@Body() body: Pet): Promise<PetEntity> {
     return this.pets.add(body);
@@ -47,12 +49,16 @@ export class PetController {
   })
   @ApiBody({ type: Pet })
   @ApiResponse({ status: 200, type: PetEntity })
+  @ApiResponse({ status: 400, description: 'On an invalid request' })
   @ApiResponse({
     status: 404,
     description: 'When pet not found by provided "id".',
   })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
-  async put(@Param('id') id: string, @Body() body: Pet): Promise<PetEntity> {
+  async put(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: Pet,
+  ): Promise<PetEntity> {
     const updated = this.pets.update(id, body);
 
     if (updated.err) throw this.intoHttpError(updated.val);
@@ -69,12 +75,13 @@ export class PetController {
     example: randomUUID(),
   })
   @ApiResponse({ status: 200, type: PetEntity })
+  @ApiResponse({ status: 400, description: 'On an invalid request' })
   @ApiResponse({
     status: 404,
     description: 'When pet not found by provided "id".',
   })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
-  async get(@Param('id') id: string): Promise<PetEntity> {
+  async get(@Param('id', new ParseUUIDPipe()) id: string): Promise<PetEntity> {
     const pet = this.pets.get(id);
 
     if (pet.err) throw this.intoHttpError(pet.val);
@@ -85,6 +92,7 @@ export class PetController {
   @Get()
   @ApiOperation({ summary: 'Fetch all pets from store registry' })
   @ApiResponse({ status: 200, type: Array<PetEntity> })
+  @ApiResponse({ status: 400, description: 'On an invalid request' })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
   async filter(@Query() query?: PetQuery): Promise<PetEntity[]> {
     return this.pets.filter(query);
@@ -99,12 +107,13 @@ export class PetController {
     example: randomUUID(),
   })
   @ApiResponse({ status: 200, description: 'On a successful deletion.' })
+  @ApiResponse({ status: 400, description: 'On an invalid request' })
   @ApiResponse({
     status: 404,
     description: 'When pet not found by provided "id".',
   })
   @ApiResponse({ status: 500, description: 'On unknown internal server error' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
     const deleted = this.pets.delete(id);
 
     if (deleted.err) throw this.intoHttpError(deleted.val);
