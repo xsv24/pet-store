@@ -116,7 +116,7 @@ describe('PetController (e2e)', () => {
       // Arrange
       const pet = await PostPet(server);
 
-      const update = { ...pet, name: 'bobby' };
+      const update = { ...pet, name: 'Bobby' };
 
       // Act & Assert
       await server

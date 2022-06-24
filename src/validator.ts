@@ -31,9 +31,14 @@ export class ValidationPipe implements PipeTransform<any> {
   }
 }
 
-export function parseUUID(): ParseUUIDPipe {
-  return new ParseUUIDPipe({ version: '4' });
-}
+export const parseUUID = (): ParseUUIDPipe =>
+  new ParseUUIDPipe({ version: '4' });
+
+export const compare = (a: string, b: string): boolean =>
+  a.trim().toLowerCase() === b.trim().toLowerCase();
+
+export const sameDay = (a: string, b: string): boolean =>
+  new Date(a).toDateString() === new Date(b).toDateString();
 
 export function setup(app: INestApplication): INestApplication {
   app.useGlobalPipes(new ValidationPipe());

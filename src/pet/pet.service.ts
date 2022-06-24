@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { compare, sameDay } from '../validator';
 import { Result, Ok, Err } from 'ts-results';
 import { Pet, PetEntity, PetQuery } from './pet.entity';
 
@@ -21,11 +22,11 @@ export class PetService {
 
   filter(query?: PetQuery): PetEntity[] {
     return Object.values(this.pets).filter(
-      ({ name, type, dob, species }) =>
-        (!query?.name || name == query.name) &&
-        (!query?.type || type == query.type) &&
-        (!query?.dob || dob == query.dob) && // TODO: Would probably have a date range match instead.
-        (!query?.species || species == query.species),
+      (pet) =>
+        (!query?.type || pet.type === query.type) &&
+        (!query?.dob || sameDay(pet.dob, query.dob)) && // TODO: Would probably have a date range match instead.
+        (!query?.name || compare(pet.name, query.name)) &&
+        (!query?.species || compare(pet.species, query.species)),
     );
   }
 

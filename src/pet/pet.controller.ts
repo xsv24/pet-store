@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
-import { parseUUID } from 'src/validator';
+import { parseUUID } from '../validator';
 import { Pet, PetEntity, PetQuery } from './pet.entity';
 import { Errors, PetService } from './pet.service';
 

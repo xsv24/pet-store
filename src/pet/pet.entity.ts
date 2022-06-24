@@ -89,8 +89,10 @@ export class PetEntity extends Pet {
     super();
     this.id = id;
     this.dob = pet.dob;
-    this.name = pet.name;
-    this.species = pet.species;
     this.type = pet.type;
+
+    const name = pet.name.trim();
+    this.name = name.charAt(0).toUpperCase() + name.slice(1);
+    this.species = pet.species.trim();
   }
 }
