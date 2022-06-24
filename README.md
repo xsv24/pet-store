@@ -5,7 +5,7 @@ Pet store API built using [nestjs](https://nestjs.com/) with openapi swagger doc
 - [Swagger docs](http://localhost:3000/api/)
 - [API](http://localhost:3000/v1/pets)
 
-### Future Improvements
+### 🔮 Future Improvements
 - pipeline: lint -> test -> static code analysis -> code coverage -> build docker image -> deploy
 - Database
 - Structured logging
