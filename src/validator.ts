@@ -5,6 +5,7 @@ import {
   BadRequestException,
   Type,
   INestApplication,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
@@ -17,6 +18,7 @@ export class ValidationPipe implements PipeTransform<any> {
     }
     const object = plainToClass(meta, value);
     const errors = await validate(object);
+
     if (errors.length > 0) {
       throw new BadRequestException('Invalid request');
     }
@@ -27,6 +29,10 @@ export class ValidationPipe implements PipeTransform<any> {
     const types: Type<any>[] = [String, Boolean, Number, Array, Object];
     return !types.includes(meta);
   }
+}
+
+export function parseUUID(): ParseUUIDPipe {
+  return new ParseUUIDPipe({ version: '4' });
 }
 
 export function setup(app: INestApplication): INestApplication {
